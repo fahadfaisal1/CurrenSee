@@ -318,6 +318,50 @@ class _AnyToAnyState extends State<AnyToAny> {
     });
   }
 
+  // void showConversionHistory(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text('Conversion History'),
+  //         content: SingleChildScrollView(
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               ...conversionHistory.map((historyItem) => Text(
+  //                 '${historyItem.date.toString()} - ${historyItem.amount} ${historyItem.fromCurrency} to ${historyItem.toCurrency}: ${historyItem.result}',
+  //               )),
+  //               SizedBox(height: 10),
+  //               ElevatedButton(
+  //                 onPressed: () {
+  //                   setState(() {
+  //                     conversionHistory.clear();
+  //                   });
+  //                   Navigator.of(context).pop();
+  //                 },
+  //                 child: Text('Clear History'),
+  //                 style: ButtonStyle(
+  //                   backgroundColor: MaterialStateProperty.all(
+  //                     Theme.of(context).primaryColor,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //             child: Text('Close'),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
+
   void showConversionHistory(BuildContext context) {
     showDialog(
       context: context,
@@ -328,7 +372,7 @@ class _AnyToAnyState extends State<AnyToAny> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ...conversionHistory.map((historyItem) => Text(
+                ...conversionHistory.reversed.map((historyItem) => Text(
                   '${historyItem.date.toString()} - ${historyItem.amount} ${historyItem.fromCurrency} to ${historyItem.toCurrency}: ${historyItem.result}',
                 )),
                 SizedBox(height: 10),
@@ -361,6 +405,8 @@ class _AnyToAnyState extends State<AnyToAny> {
       },
     );
   }
+
+
 
   void showExchangeRateInfo(BuildContext context) {
     showDialog(
