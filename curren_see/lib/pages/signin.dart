@@ -14,8 +14,6 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
 
-  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
-  final GoogleSignIn googleSignIn = GoogleSignIn();
   final userEmail = TextEditingController();
   final userPassword = TextEditingController();
 
@@ -26,13 +24,24 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  Future<void> _handleSignIn() async {
-    try {
-      await _googleSignIn.signIn();
-    } catch (error) {
-      print('Error during Google sign in: $error');
-    }
+  signInWithGoogle() async {
+    final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
+    final GoogleSignInAuthentication gAuth = await gUser!.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: gAuth.accessToken,
+      idToken: gAuth.idToken,
+    );
+
+    return await FirebaseAuth.instance.signInWithCredential(credential);
   }
+
+  // Future<void> _handleSignIn() async {
+  //   try {
+  //     await _googleSignIn.signIn();
+  //   } catch (error) {
+  //     print('Error during Google sign in: $error');
+  //   }
+  // }
 
 
   Future<UserCredential?> signInWithFacebook() async {
@@ -64,20 +73,6 @@ class _SignInState extends State<SignIn> {
   }
 
 
-  // Future<UserCredential?> signInWithGoogle() async {
-  //   try {
-  //     final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
-  //     final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
-  //     final AuthCredential credential = GoogleAuthProvider.credential(
-  //       accessToken: googleSignInAuthentication.accessToken,
-  //       idToken: googleSignInAuthentication.idToken,
-  //     );
-  //     return await _auth.signInWithCredential(credential);
-  //   } catch (error) {
-  //     print(error);
-  //     return null;
-  //   }
-  // }
 
   @override
   void dispose() {
@@ -212,7 +207,7 @@ class _SignInState extends State<SignIn> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   GestureDetector(
-                    onTap: _handleSignIn,
+                    onTap: signInWithGoogle,
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(

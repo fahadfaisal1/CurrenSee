@@ -38,6 +38,8 @@ dependencies:
   flutter_facebook_auth: ^6.0.3
   dropdown_search: ^5.0.6
   dropdown_button2: ^2.3.9
+  flutter_typeahead: ^4.0.0
+
 
 
   # The following adds the Cupertino Icons font to your application.

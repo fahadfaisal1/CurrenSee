@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:curren_see/conversion/fetchrates.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class ConversionHistoryItem {
   final DateTime date;
@@ -31,6 +32,8 @@ class AnyToAny extends StatefulWidget {
 
 class _AnyToAnyState extends State<AnyToAny> {
   TextEditingController amountController = TextEditingController();
+  TextEditingController fromCurrencyController = TextEditingController();
+  TextEditingController toCurrencyController = TextEditingController();
   String dropdownValue1 = 'AUD';
   String dropdownValue2 = 'AUD';
   String answer = 'Converted Currency will be shown here :)';
@@ -169,7 +172,7 @@ class _AnyToAnyState extends State<AnyToAny> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
+            const Text(
               'Convert Any Currency',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
             ),
@@ -177,7 +180,14 @@ class _AnyToAnyState extends State<AnyToAny> {
             TextFormField(
               key: ValueKey('amount'),
               controller: amountController,
-              decoration: InputDecoration(hintText: 'Enter Amount'),
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                labelText: 'Amount',
+                hintText: 'Enter Your Amount',
+                prefixIcon: const Icon(Icons.numbers),
+              ),
               keyboardType: TextInputType.number,
               onChanged: (value) {
                 updateConversion();
@@ -187,35 +197,34 @@ class _AnyToAnyState extends State<AnyToAny> {
             Row(
               children: [
                 Expanded(
-                  child: DropdownButton<String>(
-                    value: dropdownValue1,
-                    icon: const Icon(Icons.arrow_drop_down_rounded),
-                    iconSize: 24,
-                    elevation: 16,
-                    isExpanded: true,
-                    underline: Container(
-                      height: 2,
-                      color: Colors.grey.shade400,
+                  child: TypeAheadFormField(
+                    textFieldConfiguration: TextFieldConfiguration(
+                      controller: fromCurrencyController,
+                      decoration: InputDecoration(
+                        labelText: 'From Currency',
+                        hintText: 'Select From Currency',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                     ),
-                    onChanged: (String? newValue) {
+                    suggestionsCallback: (pattern) {
+                      return widget.currencies.keys
+                          .where((currency) =>
+                          currency.toLowerCase().contains(pattern.toLowerCase()))
+                          .toList();
+                    },
+                    itemBuilder: (context, suggestion) {
+                      return ListTile(
+                        title: Text(suggestion),
+                      );
+                    },
+                    onSuggestionSelected: (suggestion) {
                       setState(() {
-                        dropdownValue1 = newValue!;
+                        fromCurrencyController.text = suggestion;
                       });
                       updateConversion();
                     },
-                    items: widget.currencies.keys
-                        .toSet()
-                        .toList()
-                        .map<DropdownMenuItem<String>>((value) {
-                      String currencyName = widget.currencies[value]!;
-                      String currencySymbol = currencySymbols[value] ?? value;
-                      String displayText = '$currencyName ($currencySymbol)';
-
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(displayText),
-                      );
-                    }).toList(),
                   ),
                 ),
                 Container(
@@ -223,63 +232,65 @@ class _AnyToAnyState extends State<AnyToAny> {
                   child: Text('To'),
                 ),
                 Expanded(
-                  child: DropdownButton<String>(
-                    value: dropdownValue2,
-                    icon: const Icon(Icons.arrow_drop_down_rounded),
-                    iconSize: 24,
-                    elevation: 16,
-                    isExpanded: true,
-                    underline: Container(
-                      height: 2,
-                      color: Colors.grey.shade400,
+                  child: TypeAheadFormField(
+                    textFieldConfiguration: TextFieldConfiguration(
+                      controller:  toCurrencyController,
+                      decoration: InputDecoration(
+                        labelText: 'To Currency',
+                        hintText: 'Select To Currency',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                     ),
-                    onChanged: (String? newValue) {
+                    suggestionsCallback: (pattern) {
+                      return widget.currencies.keys
+                          .where((currency) =>
+                          currency.toLowerCase().contains(pattern.toLowerCase()))
+                          .toList();
+                    },
+                    itemBuilder: (context, suggestion) {
+                      return ListTile(
+                        title: Text(suggestion),
+                      );
+                    },
+                    onSuggestionSelected: (suggestion) {
                       setState(() {
-                        dropdownValue2 = newValue!;
+                        toCurrencyController.text = suggestion;
                       });
                       updateConversion();
                     },
-                    items: widget.currencies.keys
-                        .toSet()
-                        .toList()
-                        .map<DropdownMenuItem<String>>((value) {
-                      String currencyName = widget.currencies[value]!;
-                      String currencySymbol = currencySymbols[value] ?? value;
-                      String displayText = '$currencyName ($currencySymbol)';
-
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(displayText),
-                      );
-                    }).toList(),
                   ),
                 ),
               ],
             ),
             SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
+            MaterialButton(
+              onPressed:() {
                 showConversionHistory(context);
               },
-              child: Text('View History'),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                  Theme.of(context).primaryColor,
+              color: Colors.black,
+              child: const Text(
+                'View History',
+                style: TextStyle(
+                    color: Colors.white
                 ),
               ),
             ),
             SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
+            MaterialButton(
+              onPressed:() {
                 showExchangeRateInfo(context);
               },
-              child: Text('View Exchange Rate Info'),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                  Theme.of(context).primaryColor,
+              color: Colors.black,
+              child: const Text(
+                'View Exchange Rate Info',
+                style: TextStyle(
+                    color: Colors.white
                 ),
               ),
             ),
+
             SizedBox(height: 10),
             Container(child: Text(answer)),
           ],
@@ -290,9 +301,12 @@ class _AnyToAnyState extends State<AnyToAny> {
 
   void updateConversion() {
     String amount = amountController.text.trim();
-    if (amount.isEmpty) {
+    String fromCurrency = fromCurrencyController.text.trim();
+    String toCurrency = toCurrencyController.text.trim();
+
+    if (amount.isEmpty || fromCurrency.isEmpty || toCurrency.isEmpty) {
       setState(() {
-        answer = ''; // Clear the result when the amount is empty
+        answer = ''; // Clear the result when any field is empty
       });
       return;
     }
@@ -300,23 +314,53 @@ class _AnyToAnyState extends State<AnyToAny> {
     String result = convertany(
       widget.rates,
       amount,
-      dropdownValue1,
-      dropdownValue2,
+      fromCurrency,
+      toCurrency,
     );
 
-    String conversionDetails = '$amount $dropdownValue1 to $dropdownValue2: $result';
+    String conversionDetails = '$amount $fromCurrency to $toCurrency: $result';
 
     setState(() {
-      answer = '$conversionDetails ${currencySymbols[dropdownValue2] ?? dropdownValue2}';
+      answer = '$conversionDetails ${currencySymbols[toCurrency] ?? toCurrency}';
       conversionHistory.add(ConversionHistoryItem(
         date: DateTime.now(),
         amount: amount,
-        fromCurrency: dropdownValue1,
-        toCurrency: dropdownValue2,
+        fromCurrency: fromCurrency,
+        toCurrency: toCurrency,
         result: result,
       ));
     });
   }
+
+  // void updateConversion() {
+  //   String amount = amountController.text.trim();
+  //   if (amount.isEmpty) {
+  //     setState(() {
+  //       answer = ''; // Clear the result when the amount is empty
+  //     });
+  //     return;
+  //   }
+  //
+  //   String result = convertany(
+  //     widget.rates,
+  //     amount,
+  //     dropdownValue1,
+  //     dropdownValue2,
+  //   );
+  //
+  //   String conversionDetails = '$amount $dropdownValue1 to $dropdownValue2: $result';
+  //
+  //   setState(() {
+  //     answer = '$conversionDetails ${currencySymbols[dropdownValue2] ?? dropdownValue2}';
+  //     conversionHistory.add(ConversionHistoryItem(
+  //       date: DateTime.now(),
+  //       amount: amount,
+  //       fromCurrency: dropdownValue1,
+  //       toCurrency: dropdownValue2,
+  //       result: result,
+  //     ));
+  //   });
+  // }
 
   // void showConversionHistory(BuildContext context) {
   //   showDialog(
@@ -376,17 +420,18 @@ class _AnyToAnyState extends State<AnyToAny> {
                   '${historyItem.date.toString()} - ${historyItem.amount} ${historyItem.fromCurrency} to ${historyItem.toCurrency}: ${historyItem.result}',
                 )),
                 SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
+                MaterialButton(
+                  onPressed:() {
                     setState(() {
                       conversionHistory.clear();
                     });
                     Navigator.of(context).pop();
                   },
-                  child: Text('Clear History'),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      Theme.of(context).primaryColor,
+                  color: Colors.black,
+                  child: const Text(
+                    'Clear History',
+                    style: TextStyle(
+                        color: Colors.white
                     ),
                   ),
                 ),

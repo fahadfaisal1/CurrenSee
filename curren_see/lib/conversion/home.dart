@@ -1,6 +1,7 @@
 import 'package:curren_see/conversion/anyToAny.dart';
 import 'package:curren_see/conversion/fetchrates.dart';
 import 'package:curren_see/conversion/ratesmodel.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -32,16 +33,23 @@ class _HomeState extends State<Home> {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return Scaffold(
-        appBar: AppBar(title: Text('CurrenSee'),
-
-        backgroundColor: Colors.black),
-
+        appBar: AppBar(
+          title: const Text('C U R R E N S E E'),
+          actions: [
+            IconButton(
+              onPressed: () {
+                FirebaseAuth.instance.signOut();
+              },
+              icon: const Icon(Icons.logout),
+            )
+          ],
+        ),
         //Future Builder for Getting Exchange Rates
         body: Container(
           height: h,
           width: w,
-          padding: EdgeInsets.all(10),
-          decoration: BoxDecoration(
+          padding: const EdgeInsets.all(10),
+          decoration: const BoxDecoration(
               image: DecorationImage(
                   image: AssetImage('assets/currency.jpeg'),
                   fit: BoxFit.cover)),
@@ -52,7 +60,7 @@ class _HomeState extends State<Home> {
                 future: result,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
                   return Center(
                     child: FutureBuilder<Map>(
@@ -60,7 +68,7 @@ class _HomeState extends State<Home> {
                         builder: (context, currSnapshot) {
                           if (currSnapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());
+                            return const Center(child: CircularProgressIndicator());
                           }
                           return Column(
                             mainAxisAlignment: MainAxisAlignment.center,
