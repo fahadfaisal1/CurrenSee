@@ -34,8 +34,6 @@ class _AnyToAnyState extends State<AnyToAny> {
   TextEditingController amountController = TextEditingController();
   TextEditingController fromCurrencyController = TextEditingController();
   TextEditingController toCurrencyController = TextEditingController();
-  String dropdownValue1 = 'AUD';
-  String dropdownValue2 = 'AUD';
   String answer = 'Converted Currency will be shown here :)';
 
   List<ConversionHistoryItem> conversionHistory = [];
@@ -162,6 +160,14 @@ class _AnyToAnyState extends State<AnyToAny> {
     'MXN': 'Mex\$',
   };
 
+  String getCurrencyNameWithSymbol(String currencyCode) {
+    if (currencySymbols.containsKey(currencyCode)) {
+      return '$currencyCode - ${currencySymbols[currencyCode]}';
+    } else {
+      return currencyCode;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
@@ -216,7 +222,7 @@ class _AnyToAnyState extends State<AnyToAny> {
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
-                        title: Text(suggestion),
+                        title: Text(getCurrencyNameWithSymbol(suggestion)),
                       );
                     },
                     onSuggestionSelected: (suggestion) {
@@ -234,7 +240,7 @@ class _AnyToAnyState extends State<AnyToAny> {
                 Expanded(
                   child: TypeAheadFormField(
                     textFieldConfiguration: TextFieldConfiguration(
-                      controller:  toCurrencyController,
+                      controller: toCurrencyController,
                       decoration: InputDecoration(
                         labelText: 'To Currency',
                         hintText: 'Select To Currency',
@@ -251,7 +257,7 @@ class _AnyToAnyState extends State<AnyToAny> {
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
-                        title: Text(suggestion),
+                        title: Text(getCurrencyNameWithSymbol(suggestion)),
                       );
                     },
                     onSuggestionSelected: (suggestion) {
@@ -266,31 +272,26 @@ class _AnyToAnyState extends State<AnyToAny> {
             ),
             SizedBox(height: 10),
             MaterialButton(
-              onPressed:() {
+              onPressed: () {
                 showConversionHistory(context);
               },
               color: Colors.black,
               child: const Text(
                 'View History',
-                style: TextStyle(
-                    color: Colors.white
-                ),
+                style: TextStyle(color: Colors.white),
               ),
             ),
             SizedBox(height: 10),
             MaterialButton(
-              onPressed:() {
+              onPressed: () {
                 showExchangeRateInfo(context);
               },
               color: Colors.black,
               child: const Text(
                 'View Exchange Rate Info',
-                style: TextStyle(
-                    color: Colors.white
-                ),
+                style: TextStyle(color: Colors.white),
               ),
             ),
-
             SizedBox(height: 10),
             Container(child: Text(answer)),
           ],
@@ -318,10 +319,12 @@ class _AnyToAnyState extends State<AnyToAny> {
       toCurrency,
     );
 
-    String conversionDetails = '$amount $fromCurrency to $toCurrency: $result';
+    String conversionDetails =
+        '$amount ${getCurrencyNameWithSymbol(fromCurrency)} to ${getCurrencyNameWithSymbol(toCurrency)}: $result';
 
     setState(() {
-      answer = '$conversionDetails ${currencySymbols[toCurrency] ?? toCurrency}';
+      answer =
+      '$conversionDetails ${currencySymbols[toCurrency] ?? toCurrency}';
       conversionHistory.add(ConversionHistoryItem(
         date: DateTime.now(),
         amount: amount,
@@ -331,80 +334,6 @@ class _AnyToAnyState extends State<AnyToAny> {
       ));
     });
   }
-
-  // void updateConversion() {
-  //   String amount = amountController.text.trim();
-  //   if (amount.isEmpty) {
-  //     setState(() {
-  //       answer = ''; // Clear the result when the amount is empty
-  //     });
-  //     return;
-  //   }
-  //
-  //   String result = convertany(
-  //     widget.rates,
-  //     amount,
-  //     dropdownValue1,
-  //     dropdownValue2,
-  //   );
-  //
-  //   String conversionDetails = '$amount $dropdownValue1 to $dropdownValue2: $result';
-  //
-  //   setState(() {
-  //     answer = '$conversionDetails ${currencySymbols[dropdownValue2] ?? dropdownValue2}';
-  //     conversionHistory.add(ConversionHistoryItem(
-  //       date: DateTime.now(),
-  //       amount: amount,
-  //       fromCurrency: dropdownValue1,
-  //       toCurrency: dropdownValue2,
-  //       result: result,
-  //     ));
-  //   });
-  // }
-
-  // void showConversionHistory(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: Text('Conversion History'),
-  //         content: SingleChildScrollView(
-  //           child: Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               ...conversionHistory.map((historyItem) => Text(
-  //                 '${historyItem.date.toString()} - ${historyItem.amount} ${historyItem.fromCurrency} to ${historyItem.toCurrency}: ${historyItem.result}',
-  //               )),
-  //               SizedBox(height: 10),
-  //               ElevatedButton(
-  //                 onPressed: () {
-  //                   setState(() {
-  //                     conversionHistory.clear();
-  //                   });
-  //                   Navigator.of(context).pop();
-  //                 },
-  //                 child: Text('Clear History'),
-  //                 style: ButtonStyle(
-  //                   backgroundColor: MaterialStateProperty.all(
-  //                     Theme.of(context).primaryColor,
-  //                   ),
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //             },
-  //             child: Text('Close'),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
 
   void showConversionHistory(BuildContext context) {
     showDialog(
@@ -417,11 +346,11 @@ class _AnyToAnyState extends State<AnyToAny> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ...conversionHistory.reversed.map((historyItem) => Text(
-                  '${historyItem.date.toString()} - ${historyItem.amount} ${historyItem.fromCurrency} to ${historyItem.toCurrency}: ${historyItem.result}',
+                  '${historyItem.date.toString()} - ${historyItem.amount} ${getCurrencyNameWithSymbol(historyItem.fromCurrency)} to ${getCurrencyNameWithSymbol(historyItem.toCurrency)}: ${historyItem.result}',
                 )),
                 SizedBox(height: 10),
                 MaterialButton(
-                  onPressed:() {
+                  onPressed: () {
                     setState(() {
                       conversionHistory.clear();
                     });
@@ -430,9 +359,7 @@ class _AnyToAnyState extends State<AnyToAny> {
                   color: Colors.black,
                   child: const Text(
                     'Clear History',
-                    style: TextStyle(
-                        color: Colors.white
-                    ),
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
               ],
@@ -450,8 +377,6 @@ class _AnyToAnyState extends State<AnyToAny> {
       },
     );
   }
-
-
 
   void showExchangeRateInfo(BuildContext context) {
     showDialog(
