@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../conversion/home.dart';
+import '../pages/currency_news.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
@@ -17,7 +18,8 @@ class MainPage extends StatelessWidget {
           if (snapshot.hasData)
             {
               // return const HomePage();
-              return const Home();
+              // return const Home();
+              return CurrencyNews();
             } else
             {
               return const AuthPage();
