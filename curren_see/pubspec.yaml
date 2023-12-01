@@ -40,6 +40,7 @@ dependencies:
   dropdown_button2: ^2.3.9
   flutter_typeahead: ^4.0.0
   http: ^1.1.2
+  firebase_messaging: ^14.7.6
 
 
 

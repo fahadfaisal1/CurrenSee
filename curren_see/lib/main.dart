@@ -20,7 +20,6 @@ void main() async{
     debugShowCheckedModeBanner: false,
     initialRoute: 'main',
     routes: {
-      // 'main': (context) => const AnyToAny(currencies: {}, rates: null,),
       'main': (context)=> const MainPage(),
 
     },

@@ -35,7 +35,7 @@ class _CurrencyNewsState extends State<CurrencyNews> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Currency News'),
+        title: const Text('C U R R E N S E E'),
       ),
       body: FutureBuilder(
         future: newsArticles,

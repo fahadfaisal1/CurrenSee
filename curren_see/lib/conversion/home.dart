@@ -1,6 +1,9 @@
 import 'package:curren_see/conversion/anyToAny.dart';
 import 'package:curren_see/conversion/fetchrates.dart';
 import 'package:curren_see/conversion/ratesmodel.dart';
+import 'package:curren_see/pages/currency_news.dart';
+import 'package:curren_see/pages/feedback.dart';
+import 'package:curren_see/pages/user_support.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -12,13 +15,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  //Initial Variables
-
+  // Initial Variables
   late Future<RatesModel> result;
   late Future<Map> allcurrencies;
   final formkey = GlobalKey<FormState>();
 
-  //Getting RatesModel and All Currencies
+  // Getting RatesModel and All Currencies
   @override
   void initState() {
     super.initState();
@@ -28,65 +30,113 @@ class _HomeState extends State<Home> {
     });
   }
 
+  // Drawer Items
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Colors.blue,
+            ),
+            child: Text(
+              'Drawer Header',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+              ),
+            ),
+          ),
+          ListTile(
+            title: const Text('Currency News & Market Trends'),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => CurrencyNews()));
+            },
+          ),
+          ListTile(
+            title: const Text('User Support'),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const UserSupport()));
+            },
+          ),
+          ListTile(
+            title: const Text('Feedback'),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => FeedbackPage()));
+            },
+          ),
+          // Add more list items as needed
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('C U R R E N S E E'),
-          actions: [
-            IconButton(
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-              },
-              icon: const Icon(Icons.logout),
-            )
-          ],
+      appBar: AppBar(
+        title: const Text('C U R R E N S E E'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+            },
+            icon: const Icon(Icons.logout),
+          )
+        ],
+      ),
+      // Drawer added here
+      drawer: _buildDrawer(context),
+      // Future Builder for Getting Exchange Rates
+      body: Container(
+        height: h,
+        width: w,
+        padding: const EdgeInsets.all(10),
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/currency.jpeg'),
+            fit: BoxFit.cover,
+          ),
         ),
-        //Future Builder for Getting Exchange Rates
-        body: Container(
-          height: h,
-          width: w,
-          padding: const EdgeInsets.all(10),
-          decoration: const BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('assets/currency.jpeg'),
-                  fit: BoxFit.cover)),
-          child: SingleChildScrollView(
-            child: Form(
-              key: formkey,
-              child: FutureBuilder<RatesModel>(
-                future: result,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  return Center(
-                    child: FutureBuilder<Map>(
-                        future: allcurrencies,
-                        builder: (context, currSnapshot) {
-                          if (currSnapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(child: CircularProgressIndicator());
-                          }
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-
-                              AnyToAny(
-                                currencies: currSnapshot.data!,
-                                rates: snapshot.data!.rates,
-                              ),
-                            ],
-                          );
-                        }),
-                  );
-                },
-              ),
+        child: SingleChildScrollView(
+          child: Form(
+            key: formkey,
+            child: FutureBuilder<RatesModel>(
+              future: result,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                return Center(
+                  child: FutureBuilder<Map>(
+                    future: allcurrencies,
+                    builder: (context, currSnapshot) {
+                      if (currSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AnyToAny(
+                            currencies: currSnapshot.data!,
+                            rates: snapshot.data!.rates,
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                );
+              },
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
-
