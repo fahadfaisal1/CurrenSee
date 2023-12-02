@@ -3,6 +3,7 @@ import 'package:curren_see/conversion/fetchrates.dart';
 import 'package:curren_see/conversion/ratesmodel.dart';
 import 'package:curren_see/pages/currency_news.dart';
 import 'package:curren_see/pages/feedback.dart';
+import 'package:curren_see/pages/rate_alerts.dart';
 import 'package:curren_see/pages/user_support.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -38,10 +39,10 @@ class _HomeState extends State<Home> {
         children: [
           const DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: Colors.black,
             ),
             child: Text(
-              'Drawer Header',
+              'C U R R E N S E E',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
@@ -66,7 +67,12 @@ class _HomeState extends State<Home> {
               Navigator.push(context, MaterialPageRoute(builder: (context) => FeedbackPage()));
             },
           ),
-          // Add more list items as needed
+          ListTile(
+            title: const Text('Rate Alerts'),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => RateAlerts()));
+            },
+          ),
         ],
       ),
     );
