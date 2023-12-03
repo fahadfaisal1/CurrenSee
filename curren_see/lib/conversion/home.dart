@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:curren_see/conversion/anyToAny.dart';
 import 'package:curren_see/conversion/fetchrates.dart';
 import 'package:curren_see/conversion/ratesmodel.dart';
@@ -5,17 +7,18 @@ import 'package:curren_see/pages/currency_news.dart';
 import 'package:curren_see/pages/feedback.dart';
 import 'package:curren_see/pages/rate_alerts.dart';
 import 'package:curren_see/pages/user_support.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
   @override
-  _HomeState createState() => _HomeState();
+  State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+  late User user; // Declare user variable
+
   // Initial Variables
   late Future<RatesModel> result;
   late Future<Map> allcurrencies;
@@ -25,6 +28,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    user = FirebaseAuth.instance.currentUser!;
     setState(() {
       result = fetchrates();
       allcurrencies = fetchcurrencies();
@@ -37,15 +41,29 @@ class _HomeState extends State<Home> {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(
-              color: Colors.black,
-            ),
-            child: Text(
+          Container(
+            padding: const EdgeInsets.all(16),
+            color: Colors.black,
+            child: const Text(
               'C U R R E N S E E',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
+              ),
+            ),
+          ),
+          UserAccountsDrawerHeader(
+            decoration: const BoxDecoration(
+              color: Colors.black,
+            ),
+            accountName: Text(''),
+            accountEmail: Text(user.email!), // Use user.email here
+            currentAccountPicture: const CircleAvatar(
+              backgroundColor: Colors.white60,
+              child: Icon(
+                Icons.person,
+                size: 50,
+                color: Colors.white,
               ),
             ),
           ),
@@ -146,3 +164,4 @@ class _HomeState extends State<Home> {
     );
   }
 }
+
