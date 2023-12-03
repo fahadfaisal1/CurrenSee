@@ -38,26 +38,16 @@ class _HomeState extends State<Home> {
   // Drawer Items
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
+      child: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            color: Colors.black,
-            child: const Text(
-              'C U R R E N S E E',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
-            ),
-          ),
+
+          // User Account Drawer Header
           UserAccountsDrawerHeader(
             decoration: const BoxDecoration(
               color: Colors.black,
             ),
-            accountName: Text(''),
-            accountEmail: Text(user.email!), // Use user.email here
+            accountName: const Text(''),
+            accountEmail: Text(user.email!),
             currentAccountPicture: const CircleAvatar(
               backgroundColor: Colors.white60,
               child: Icon(
@@ -67,34 +57,53 @@ class _HomeState extends State<Home> {
               ),
             ),
           ),
-          ListTile(
-            title: const Text('Currency News & Market Trends'),
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => CurrencyNews()));
-            },
+
+          // Drawer Items
+          Expanded(
+            child: ListView(
+              children: [
+                ListTile(
+                  title: const Text('Currency News & Market Trends'),
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => CurrencyNews()));
+                  },
+                ),
+                ListTile(
+                  title: const Text('User Support'),
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const UserSupport()));
+                  },
+                ),
+                ListTile(
+                  title: const Text('Feedback'),
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => FeedbackPage()));
+                  },
+                ),
+                ListTile(
+                  title: const Text('Rate Alerts'),
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => RateAlerts()));
+                  },
+                ),
+              ],
+            ),
           ),
+
+          // Logout ListTile at the bottom
           ListTile(
-            title: const Text('User Support'),
+            title: const Text('Logout'),
+            leading: const Icon(Icons.logout),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const UserSupport()));
-            },
-          ),
-          ListTile(
-            title: const Text('Feedback'),
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => FeedbackPage()));
-            },
-          ),
-          ListTile(
-            title: const Text('Rate Alerts'),
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => RateAlerts()));
+              FirebaseAuth.instance.signOut();
+              Navigator.pop(context);
             },
           ),
         ],
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -106,9 +115,8 @@ class _HomeState extends State<Home> {
         actions: [
           IconButton(
             onPressed: () {
-              FirebaseAuth.instance.signOut();
             },
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.nightlight_round),
           )
         ],
       ),
