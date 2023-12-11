@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 class CurrencyNews extends StatefulWidget {
   @override
@@ -25,7 +26,7 @@ class _CurrencyNewsState extends State<CurrencyNews> {
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body);
       final List<dynamic> articles = data['articles'];
-      return articles.cast<Map<String, dynamic>>(); // Ensure the list is of the correct type
+      return articles.cast<Map<String, dynamic>>();
     } else {
       throw Exception('Failed to load news');
     }
@@ -45,7 +46,8 @@ class _CurrencyNewsState extends State<CurrencyNews> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
-            List<Map<String, dynamic>> articles = snapshot.data as List<Map<String, dynamic>>;
+            List<Map<String, dynamic>> articles =
+            snapshot.data as List<Map<String, dynamic>>;
 
             return ListView.builder(
               itemCount: articles.length,
@@ -54,9 +56,20 @@ class _CurrencyNewsState extends State<CurrencyNews> {
                 return ListTile(
                   title: Text(article['title'] ?? ''),
                   subtitle: Text(article['description'] ?? ''),
-                  onTap: () {
-                    // Implement the action when a news article is tapped
-                  },
+                  leading: article['urlToImage'] != null
+                      ? Image.network(
+                    article['urlToImage'],
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.cover,
+                  )
+                      : Image.network(
+                    'https://via.placeholder.com/80x80.png?text=No+Image',
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.cover,
+                  ),
+                  onTap: () => _launchURL(article['url']), // Open the article URL
                 );
               },
             );
@@ -64,5 +77,19 @@ class _CurrencyNewsState extends State<CurrencyNews> {
         },
       ),
     );
+  }
+
+  // Function to launch the URL in a web browser
+  _launchURL(String? url) async {
+    if (url != null && await canLaunch(url)) {
+      await launch(url);
+    } else {
+      // Handle the case where the URL is empty or not available
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Article URL not available'),
+        ),
+      );
+    }
   }
 }

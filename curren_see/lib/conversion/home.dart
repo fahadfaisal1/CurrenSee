@@ -1,3 +1,4 @@
+import 'package:curren_see/pages/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:curren_see/conversion/anyToAny.dart';
@@ -17,7 +18,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late User user; // Declare user variable
+  late User user;
+  final AppTheme appTheme = AppTheme();
 
   // Initial Variables
   late Future<RatesModel> result;
@@ -32,6 +34,9 @@ class _HomeState extends State<Home> {
     setState(() {
       result = fetchrates();
       allcurrencies = fetchcurrencies();
+    });
+    appTheme.addListener((){
+      setState(() {});
     });
   }
 
@@ -115,8 +120,9 @@ class _HomeState extends State<Home> {
         actions: [
           IconButton(
             onPressed: () {
+              appTheme.toggleTheme();
             },
-            icon: const Icon(Icons.nightlight_round),
+            icon: const Icon(Icons.brightness_4),
           )
         ],
       ),
@@ -172,4 +178,3 @@ class _HomeState extends State<Home> {
     );
   }
 }
-
