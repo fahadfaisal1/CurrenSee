@@ -93,8 +93,8 @@ class _ContactSupportState extends State<ContactSupport> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  labelText: 'Feedback',
-                  hintText: 'Enter Your Feedback',
+                  labelText: 'Message',
+                  hintText: 'Enter Your Message',
                 ),
               ),
 

@@ -35,14 +35,6 @@ class _SignInState extends State<SignIn> {
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-  // Future<void> _handleSignIn() async {
-  //   try {
-  //     await _googleSignIn.signIn();
-  //   } catch (error) {
-  //     print('Error during Google sign in: $error');
-  //   }
-  // }
-
 
   Future<UserCredential?> signInWithFacebook() async {
     try {
